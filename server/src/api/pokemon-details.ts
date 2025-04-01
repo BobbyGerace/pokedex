@@ -24,7 +24,9 @@ export const fetchPokemonDetails = async (
   const parsed = (await response.json()) as Pokemon;
 
   const speciesInfo = await fetchSpeciesInfo(id);
-  const evolutionChain = await fetchEvolutionChain(id);
+  const evolutionChain = await fetchEvolutionChain(
+    speciesInfo.evolution_chain.url,
+  );
 
   return {
     name: parsed.name,
@@ -59,10 +61,8 @@ const formatFlavorTexts = (entries: FlavorText[]) => {
   return [...new Set(texts)];
 };
 
-const fetchEvolutionChain = async (chainId: number) => {
-  const response = await fetch(
-    `https://pokeapi.co/api/v2/evolution-chain/${chainId}`,
-  );
+const fetchEvolutionChain = async (url: string) => {
+  const response = await fetch(url);
 
   if (!response.ok) throw new Error("Oopsies");
 

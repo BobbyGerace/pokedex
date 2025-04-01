@@ -1,4 +1,5 @@
 import type { Context } from "hono";
+import { logger } from "hono/logger";
 
 export class ParamCache<T> {
   private cache: Record<string, T> = {};
@@ -17,7 +18,11 @@ export class ParamCache<T> {
   async cachedValue(c: Context, fn: () => Promise<T>) {
     const key = this.createKey(c);
 
-    if (this.cache.hasOwnProperty(key)) return Promise.resolve(this.cache[key]);
+    if (this.cache.hasOwnProperty(key)) {
+      console.log(`Cache hit! ${c.req.url}`);
+      return Promise.resolve(this.cache[key]);
+    }
+    console.log(`Cache miss! ${c.req.url}`);
 
     const value = await fn();
 

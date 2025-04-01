@@ -4,6 +4,8 @@ import { LoadingSpinner } from "../components/loading-spinner";
 import { capitalize, leftPad0 } from "../utils";
 import * as api from "../lib/api";
 import type { PokemonDetailResult } from "shared-types/api-response";
+import { StatsTable } from "./stats-table";
+import { EvolutionChart } from "./evolution-chart";
 
 const CIRCLE_SIZE = 64;
 const START_ANGLE = (Math.PI * 7) / 4;
@@ -48,6 +50,9 @@ export const PokemonDetails: FC = () => {
     // Make sure they overlap correctly
     .reverse();
 
+  const idx = Math.floor(Math.random() * details.flavorTexts.length);
+  const flavorText = details.flavorTexts[idx];
+
   return (
     <div className="container mx-auto">
       <div className="block rounded-lg shadow overflow-hidden">
@@ -64,17 +69,10 @@ export const PokemonDetails: FC = () => {
           </div>
         </div>
         <div className="relative pt-10 bg-slate-100 p-8 pt-16">
+          <blockquote>{flavorText}</blockquote>
           <h2 className="text-2xl">Stats</h2>
-          <table>
-            <tbody>
-              {details.stats.map((stat) => (
-                <tr>
-                  <td className="p-4 border-1">{stat.name}</td>
-                  <td className="p-4 border-1">{stat.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <StatsTable stats={details.stats} />
+          <EvolutionChart chain={details.evolutionChain} />
         </div>
       </div>
     </div>
