@@ -1,20 +1,11 @@
 import type { FC } from "react";
 import { Link } from "react-router";
+import { capitalize, leftPad0 } from "../utils";
 
 type PokemonCardProps = {
   name: string;
   id: number;
   img: string;
-};
-
-const capitalize = (str: string) => {
-  const words = str.split(" ");
-  return words.map((w) => w[0].toUpperCase() + w.slice(1)).join("");
-};
-
-const leftPad0 = (str: string, n: number): string => {
-  while (str.length < n) str = "0" + str;
-  return str;
 };
 
 export const PokemonCard: FC<PokemonCardProps> = ({ name, id, img }) => {
