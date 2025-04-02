@@ -1,9 +1,19 @@
 import type { FC } from "react";
 import type { EvolutionChain } from "shared-types/api-response";
+import { capitalize } from "../utils";
+import { Link } from "react-router";
 
 type EvolutionChartProps = {
   chain: EvolutionChain;
 };
+
+type ChartNodeProps =
+  | { type: "pokemon"; name: string; image: string; id: number }
+  | { type: "empty" }
+  | { type: "lineage-i" }
+  | { type: "lineage-l" }
+  | { type: "lineage-t" }
+  | { type: "continuation" };
 
 export const EvolutionChart: FC<EvolutionChartProps> = ({ chain }) => {
   const rows = displayTree(chain);
@@ -25,7 +35,7 @@ export const EvolutionChart: FC<EvolutionChartProps> = ({ chain }) => {
 const ChartNode: FC<ChartNodeProps> = (props) => {
   switch (props.type) {
     case "pokemon":
-      return <Pokemon name={props.name} image={props.image} />;
+      return <Pokemon name={props.name} image={props.image} id={props.id} />;
     case "empty":
       return <td></td>;
     case "lineage-i":
@@ -39,13 +49,14 @@ const ChartNode: FC<ChartNodeProps> = (props) => {
   }
 };
 
-const Pokemon: FC<{ name: string; image: string }> = (props) => {
+const Pokemon: FC<{ name: string; image: string; id: number }> = (props) => {
+  const link = `/${props.id}/${capitalize(props.name)}`;
   return (
     <td className="h-32 w-32 p-4 flex flex-col items-center justify-center">
-      <div>
+      <Link to={link}>
         <img src={props.image} />
-      </div>
-      <div className="">{props.name}</div>
+      </Link>
+      <Link to={link}>{capitalize(props.name)}</Link>
     </td>
   );
 };
@@ -94,18 +105,10 @@ const Continuation: FC = () => {
   return <td className={classes.join(" ")}></td>;
 };
 
-type ChartNodeProps =
-  | { type: "pokemon"; name: string; image: string }
-  | { type: "empty" }
-  | { type: "lineage-i" }
-  | { type: "lineage-l" }
-  | { type: "lineage-t" }
-  | { type: "continuation" };
-
 // Recursively generate an evolution tree similar to a file structure
 const displayTree = (chain: EvolutionChain): ChartNodeProps[][] => {
   const tree: ChartNodeProps[][] = [
-    [{ type: "pokemon", name: chain.name, image: chain.img }],
+    [{ type: "pokemon", name: chain.name, image: chain.img, id: chain.id }],
   ];
 
   if (chain.evolvesTo.length === 0) return tree;

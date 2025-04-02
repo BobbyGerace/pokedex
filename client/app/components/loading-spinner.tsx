@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 export const LoadingSpinner: FC = () => {
   return (
-    <div role="status">
+    <div className="p-16 mx-auto flex justify-center" role="status">
       <svg
         aria-hidden="true"
         className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
