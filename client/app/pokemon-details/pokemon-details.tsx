@@ -6,6 +6,7 @@ import * as api from "../lib/api";
 import type { PokemonDetailResult } from "shared-types/api-response";
 import { StatsTable } from "./stats-table";
 import { EvolutionChart } from "./evolution-chart";
+import { Layout } from "../components/layout";
 
 const CIRCLE_SIZE = 64;
 const START_ANGLE = (Math.PI * 7) / 4;
@@ -54,7 +55,7 @@ export const PokemonDetails: FC = () => {
   const flavorText = details.flavorTexts[idx];
 
   return (
-    <div className="container mx-auto">
+    <Layout>
       <div className="block rounded-lg shadow overflow-hidden">
         <div className="bg-blue-900 w-full p-4 relative text-center">
           <h1 className="font-mono text-5xl text-white mb-2">
@@ -76,6 +77,6 @@ export const PokemonDetails: FC = () => {
           <EvolutionChart chain={details.evolutionChain} />
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
