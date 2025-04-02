@@ -72,6 +72,7 @@ export const PokemonDetails: FC = () => {
           <blockquote>{flavorText}</blockquote>
           <h2 className="text-2xl">Stats</h2>
           <StatsTable stats={details.stats} />
+          <h2 className="text-2xl">Evolution</h2>
           <EvolutionChart chain={details.evolutionChain} />
         </div>
       </div>

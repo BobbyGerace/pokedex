@@ -7,7 +7,7 @@ type StatsTableProps = {
 
 export const StatsTable: FC<StatsTableProps> = ({ stats }) => {
   return stats.map((stat) => (
-    <div>
+    <div key={stat.name}>
       <span>
         {stat.name}: {stat.value}
       </span>
