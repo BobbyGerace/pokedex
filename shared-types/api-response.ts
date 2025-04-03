@@ -2,7 +2,6 @@ export type PokemonListResult = {
   name: string;
   id: number;
   img: string;
-  url: string;
 };
 
 export type PokemonDetailResult = {

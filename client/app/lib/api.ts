@@ -6,9 +6,12 @@ import type {
 const BASE_URL = "http://localhost:3000/api";
 
 export const pokemonList = async (
-  page: number
+  page: number,
+  search?: string
 ): Promise<PokemonListResult[]> => {
-  const response = await fetch(`${BASE_URL}/pokemon?page=${page}`);
+  const response = await fetch(
+    `${BASE_URL}/pokemon?page=${page}&search=${search ?? ""}`
+  );
 
   if (!response.ok) throw new Error("Oopsies");
 
