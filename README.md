@@ -6,3 +6,5 @@ This is a learning project for me. So the code is not great in places, and the d
 - React Router 7
 - Tailwind
 - Vite
+
+(The Hono server ended up being redundant. We could move its code into RR7)

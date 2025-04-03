@@ -1,5 +1,4 @@
 import type { Context } from "hono";
-import { logger } from "hono/logger";
 
 export class ParamCache<T> {
   private cache: Record<string, T> = {};
@@ -8,7 +7,8 @@ export class ParamCache<T> {
   // like we're gonna ship it to prod
   private createKey(c: Context): string {
     const queryParams = c.req.param();
-    const sortedStrings = Object.entries(queryParams)
+    const searchParams = c.req.query();
+    const sortedStrings = Object.entries({ ...queryParams, ...searchParams })
       .map(([k, v]) => `${k}=${v}`)
       .sort();
 
@@ -19,10 +19,8 @@ export class ParamCache<T> {
     const key = this.createKey(c);
 
     if (this.cache.hasOwnProperty(key)) {
-      console.log(`Cache hit! ${c.req.url}`);
       return Promise.resolve(this.cache[key]);
     }
-    console.log(`Cache miss! ${c.req.url}`);
 
     const value = await fn();
 

@@ -4,6 +4,8 @@ import type { Context } from "hono";
 import { ParamCache } from "../lib/param-cache.js";
 import { constructImgUrl } from "./utils.js";
 
+const PAGE_SIZE = 50;
+
 const parseId = (url: string): number => {
   const matches = url.match(/pokemon\/(\d+)/);
   return matches ? parseInt(matches[1]) : -1;
@@ -11,8 +13,12 @@ const parseId = (url: string): number => {
 
 const cache = new ParamCache<PokemonListResult[]>();
 
-const pokemonList = async (): Promise<PokemonListResult[]> => {
-  const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+const pokemonList = async (page: number): Promise<PokemonListResult[]> => {
+  const offset = (page - 1) * PAGE_SIZE;
+  let url: string;
+  const response = await fetch(
+    (url = `https://pokeapi.co/api/v2/pokemon?limit=${PAGE_SIZE}&offset=${offset}`),
+  );
 
   if (!response.ok) throw new Error("Oopsies");
 
@@ -25,7 +31,8 @@ const pokemonList = async (): Promise<PokemonListResult[]> => {
 };
 
 export const pokemon = async (c: Context) => {
-  const list = await cache.cachedValue(c, pokemonList);
+  const page = parseInt(c.req.query().page);
+  const list = await cache.cachedValue(c, () => pokemonList(page));
 
   return c.json(list);
 };

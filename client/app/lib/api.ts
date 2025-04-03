@@ -3,10 +3,12 @@ import type {
   PokemonListResult,
 } from "shared-types/api-response";
 
-const BASE_URL = "/api";
+const BASE_URL = "http://localhost:3000/api";
 
-export const pokemonList = async (): Promise<PokemonListResult[]> => {
-  const response = await fetch(`${BASE_URL}/pokemon`);
+export const pokemonList = async (
+  page: number
+): Promise<PokemonListResult[]> => {
+  const response = await fetch(`${BASE_URL}/pokemon?page=${page}`);
 
   if (!response.ok) throw new Error("Oopsies");
 

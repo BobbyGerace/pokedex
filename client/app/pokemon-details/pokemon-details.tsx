@@ -1,8 +1,6 @@
 import { useEffect, useState, type FC } from "react";
-import { useParams } from "react-router";
 import { LoadingSpinner } from "../components/loading-spinner";
 import { capitalize, leftPad0 } from "../utils";
-import * as api from "../lib/api";
 import type { PokemonDetailResult } from "shared-types/api-response";
 import { StatsTable } from "./stats-table";
 import { EvolutionChart } from "./evolution-chart";
@@ -11,24 +9,16 @@ const CIRCLE_SIZE = 64;
 const START_ANGLE = (Math.PI * 7) / 4;
 const SPACING_ANGLE = Math.PI / 5;
 
-export const PokemonDetails: FC = () => {
-  const [details, setDetails] = useState<PokemonDetailResult | null>(null);
+type PokemonDetailsProps = {
+  details: PokemonDetailResult;
+};
+
+export const PokemonDetails: FC<PokemonDetailsProps> = ({ details }) => {
   const [flavorTextIdx, setFlavorTextIdx] = useState<number>(0);
-  const { id: idStr, name } = useParams();
-
-  if (typeof idStr !== "string" || typeof name !== "string") {
-    throw new Error("We done goofed. You may now panic.");
-  }
-
-  const id = parseInt(idStr, 10);
 
   useEffect(() => {
-    setDetails(null);
-    api.pokemonDetails(id).then((details) => {
-      setDetails(details);
-      setFlavorTextIdx(Math.floor(Math.random() * details.flavorTexts.length));
-    });
-  }, [id]);
+    setFlavorTextIdx(Math.floor(Math.random() * details.flavorTexts.length));
+  }, [details]);
 
   if (details == null) return <LoadingSpinner />;
 
@@ -63,7 +53,7 @@ export const PokemonDetails: FC = () => {
         <h1 className="font-mono text-5xl text-white mb-2">
           {capitalize(details.name)}{" "}
           <span className="text-2xl text-slate-400">
-            #{leftPad0(id.toString(), 4)}
+            #{leftPad0(details.id.toString(), 4)}
           </span>
         </h1>
         <div className="bg-white rounded-full h-32 p-4 border-1 border-slate-500 absolute z-1 left-4 top-2">
@@ -77,15 +67,7 @@ export const PokemonDetails: FC = () => {
         </pre>
         <div className="my-8 flex justify-between gap-8">
           <div className="flex-1">
-            <div className="mb-8">
-              <p>
-                <strong>Height:</strong> {details.height}
-              </p>
-              <p>
-                <strong>Weight:</strong> {details.weight}
-              </p>
-            </div>
-            <div className="flex gap-2 justify-start">
+            <div className="flex gap-2 justify-start mb-8">
               {details.types.map((t) => (
                 <img
                   key={t.id}
@@ -93,6 +75,14 @@ export const PokemonDetails: FC = () => {
                   className="w-24"
                 />
               ))}
+            </div>
+            <div className="mb-8">
+              <p>
+                <strong>Height:</strong> {details.height}
+              </p>
+              <p>
+                <strong>Weight:</strong> {details.weight}
+              </p>
             </div>
           </div>
           <StatsTable stats={details.stats} />
