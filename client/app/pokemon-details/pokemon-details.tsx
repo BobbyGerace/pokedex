@@ -50,7 +50,7 @@ export const PokemonDetails: FC<PokemonDetailsProps> = ({ details }) => {
   return (
     <div className="block rounded-lg shadow overflow-hidden">
       <div className="bg-blue-900 w-full p-4 relative text-center">
-        <h1 className="font-mono text-5xl text-white mb-2">
+        <h1 className="font-mono text-5xl text-white my-1">
           {capitalize(details.name)}{" "}
           <span className="text-2xl text-slate-400">
             #{leftPad0(details.id.toString(), 4)}

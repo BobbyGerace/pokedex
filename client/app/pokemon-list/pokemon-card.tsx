@@ -14,7 +14,7 @@ export const PokemonCard: FC<PokemonCardProps> = ({ name, id, img }) => {
   return (
     <Link
       to={`${id}/${capsName}`}
-      className="block rounded-lg shadow overflow-hidden h-48"
+      className="block rounded-lg shadow overflow-hidden min-h-48 bg-slate-100"
     >
       <div className="relative bg-blue-900 w-full h-28 p-4 flex justify-center">
         <div className="absolute top-0 left-0 p-2 text-xs text-slate-200">
@@ -24,7 +24,7 @@ export const PokemonCard: FC<PokemonCardProps> = ({ name, id, img }) => {
           <img src={img} />
         </div>
       </div>
-      <div className="text-center pt-10 h-20 bg-slate-100">
+      <div className="text-center pt-10 pb-4 bg-slate-100">
         <span className="font-bold">{capsName}</span>
       </div>
     </Link>

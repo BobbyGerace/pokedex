@@ -1,4 +1,4 @@
-import { useEffect, useReducer, type FC } from "react";
+import { useEffect, useReducer, useRef, type FC } from "react";
 import { PokemonCard } from "./pokemon-card";
 import type { PokemonListResult } from "shared-types/api-response";
 
@@ -16,6 +16,7 @@ type ReducerState = {
 type ReducerActions =
   | { type: "load-more" }
   | { type: "search-change"; value: string }
+  | { type: "new-search" }
   | { type: "data-received"; data: PokemonListResult[] };
 
 const reducer = (prev: ReducerState, action: ReducerActions): ReducerState => {
@@ -25,8 +26,12 @@ const reducer = (prev: ReducerState, action: ReducerActions): ReducerState => {
     case "search-change":
       return {
         ...prev,
-        loading: true,
         search: action.value,
+      };
+    case "new-search":
+      return {
+        ...prev,
+        loading: true,
         page: 1,
         data: [],
       };
@@ -40,6 +45,7 @@ const reducer = (prev: ReducerState, action: ReducerActions): ReducerState => {
 };
 
 export const PokemonList: FC<PokemonListProps> = ({ data }) => {
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [state, dispatch] = useReducer(reducer, {
     data,
     loading: false,
@@ -47,10 +53,10 @@ export const PokemonList: FC<PokemonListProps> = ({ data }) => {
     search: "",
   });
 
-  // TODO: This should be debounced, but since we're not hitting the api directly
-  // it's not a big deal for now
   const fetchPokemon = async (page: number, search: string) => {
-    const res = await fetch(`/pokemon-list?page=${page}&search=${search}`);
+    clearTimeout(debounceTimeoutRef.current);
+    const searchStr = encodeURIComponent(search.trim());
+    const res = await fetch(`/pokemon-list?page=${page}&search=${searchStr}`);
     const json = await res.json();
     dispatch({ type: "data-received", data: json });
   };
@@ -68,8 +74,11 @@ export const PokemonList: FC<PokemonListProps> = ({ data }) => {
   };
 
   const handleSearchChange = (value: string) => {
+    clearTimeout(debounceTimeoutRef.current);
     dispatch({ type: "search-change", value });
-    fetchPokemon(1, value);
+    debounceTimeoutRef.current = setTimeout(() => {
+      fetchPokemon(1, value);
+    }, 750);
   };
 
   useEffect(() => {
